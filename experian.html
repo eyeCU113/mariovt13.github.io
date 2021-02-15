@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<!--
+	Massively by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+  <head>
+    <title>Experian Bank Portal</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript
+      ><link rel="stylesheet" href="assets/css/noscript.css"
+    /></noscript>
+  </head>
+  <body class="is-preload">
+    <!-- Wrapper -->
+    <div id="wrapper">
+      <!-- Header -->
+      <header id="header">
+        <a href="index.html" class="logo">Portfolio</a>
+      </header>
+
+      <!-- Nav -->
+      <nav id="nav">
+        <ul class="links">
+          <li class="active"><a href="index.html">Projects</a></li>
+          <li><a href="Resume.html">Resume</a></li>
+        </ul>
+        <ul class="icons">
+          <a
+            href="https://www.linkedin.com/in/mariovt"
+            class="icon brands fa-linkedin"
+            target="_blank"
+            ><span class="label">LinkedIn</span></a
+          >
+        </ul>
+      </nav>
+
+      <!-- Main -->
+      <div id="main">
+        <!-- Post -->
+        <section class="post">
+          <header class="major">
+            <h1>
+              <a>Experian</a>
+            </h1>
+            <p>
+              This is a web app white label bank portal, developed for Experian
+              company.<br />
+              It is still in production.
+            </p>
+          </header>
+          <div style="display: flex; justify-content: center">
+            <img
+              src="images/experian-accounts.png"
+              alt=""
+              width="700"
+              height="1000"
+            />
+          </div>
+          <p style="margin-top: 40px">
+            It consists of about 20 screens with variuos financial purposes.<br />
+            It mainly allows the user to service and adjust their loans and
+            credit cards, giving them various degree of flexibility.
+          </p>
+          <p>
+            My task in this project is to put together the front end part of the
+            application, to add responsive design and to allow for several
+            components to be dynamically adjusted by the back end (like the
+            colour theme and part of the content).
+          </p>
+          <p>
+            A lot of the elements repeat through out the different screens.
+            Therefore, the focus is on making reusable components (dropdowns,
+            text inputs and others)
+          </p>
+        </section>
+        <section>
+          <h5>Reusable dropdown component</h5>
+          <pre class="line-numbers">
+          <code class="language-css">
+import React, { Component } from "react";
+
+export default class Dropdown extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {};
+  }
+
+  render() {
+    let { options, placeHolder, className, onChange, style } = this.props;
+
+    let useIndex = false;
+    if (options && typeof options[0] == "undefined") {
+      useIndex = true;
+    }
+
+    return (
+      &ltselect
+        style={style || {}}
+        name={placeHolder || "Dropdown"}
+        id={placeHolder || "Dropdown"}
+        className={className}
+        defaultValue=""
+        onChange={(e) => {
+          onChange && onChange(e.target.value);
+        }}
+      >
+        {placeHolder && (
+          &ltoption disabled={true} value="">
+            {placeHolder}
+            &lt/option>
+        )}
+
+        {options &&
+          options.map((option, i) => (
+            &ltoption key={i + 1} value={`${useIndex ? i + 1 : option}`}>
+              {useIndex ? i + 1 : option}
+              &lt/option>
+          ))}
+          &lt/select>
+    );
+  }
+}
+            
+              ...
+          </code>
+        </pre>
+
+          <h5>
+            Rendering the amount of account views comming from the back end
+            server
+          </h5>
+          <pre class="line-numbers">
+          <code class="language-css">
+            {view == "Accounts" &&
+            actionViews &&
+            actionViews.map((item, i) => (
+              &ltAccountView
+                key={i}
+                id={i}
+                title={actionViewTitles[i]}
+                finItems={finItems[i]}
+                buttons={accountButtons}
+                paymentSubmited={paymentSubmited[i]}
+                arrangementSubmited={arrangementSubmited[i]}
+                paymentSubmitedFromAccView={(viewId) => {
+                  this.setState({
+                    viewId,
+                  });
+                }}
+                arrangementSubmitedFromAccView={(viewId) => {
+                  this.setState({
+                    viewId,
+                  });
+                }}
+              />
+            ))}
+
+          </code>
+        </pre>
+          <h5>Dynamically setting some of the layout colours</h5>
+          <pre class="line-numbers">
+          <code class="language-css">
+            let {
+              themeColor_1,
+              themeColor_2,
+              themeColor_3,
+              backgroundColor_1,
+              backgroundColor_2,
+              viewTitle,
+              headerFooterColor,
+            } = layoutColors();
+        
+            document.documentElement.style.setProperty("--themeColor_1", themeColor_1);
+            document.documentElement.style.setProperty("--themeColor_2", themeColor_2);
+            document.documentElement.style.setProperty("--themeColor_3", themeColor_3);
+            document.documentElement.style.setProperty(
+              "--backgroundColor_1",
+              backgroundColor_1
+            );
+            document.documentElement.style.setProperty(
+              "--backgroundColor_2",
+              backgroundColor_2
+            );
+            document.documentElement.style.setProperty("--viewTitle", viewTitle);
+            document.documentElement.style.setProperty(
+              "--headerFooterColor",
+              headerFooterColor
+            );
+          </code>
+        </pre>
+          <h5>...and applying them in the CSS</h5>
+          <pre class="line-numbers">
+            <code class="language-css">
+              :root {
+                --themeColor_1: rgb(66, 109, 169);
+                --themeColor_2: rgb(199, 210, 225);
+                --themeColor_3: rgb(142, 180, 233);
+                --viewTitle: #af1685;
+                --headerFooterColor: rgba(237, 236, 236, 0.6);
+                --backgroundColor_1: rgb(250, 250, 250);
+                --backgroundColor_2: #fff;
+              }
+              
+              .formTitle {
+                font-size: 1.3em;
+                font-family: Arial, Helvetica, sans-serif;
+                margin-top: 10px;
+              }
+              .inputField {
+                border-style: solid;
+                height: 40px;
+                width: 98%;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                border-color: var(--themeColor_2);
+                border-radius: 5px;
+                font-size: 20px;
+                padding-left: 10px;
+              }
+              .dropdown {
+                height: 45px;
+                width: 32%;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                border-color: var(--themeColor_2);
+                border-radius: 5px;
+                font-size: 19px;
+                background-color: var(--backgroundColor_1);
+                padding: 10px;
+              }
+
+              ...
+            </code>
+          </pre>
+        </section>
+      </div>
+
+      <!-- Copyright -->
+      <div id="copyright">
+        <ul>
+          <li>&copy; Mario Vatkov</li>
+          <li>Design: <a href="https://html5up.net">HTML5 UP template</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

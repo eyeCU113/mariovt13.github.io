@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<!--
+	Massively by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+  <head>
+    <title>Feia Pregnancy</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript
+      ><link rel="stylesheet" href="assets/css/noscript.css"
+    /></noscript>
+  </head>
+  <body class="is-preload">
+    <!-- Wrapper -->
+    <div id="wrapper">
+      <!-- Header -->
+      <header id="header">
+        <a href="index.html" class="logo">Portfolio</a>
+      </header>
+
+      <!-- Nav -->
+      <nav id="nav">
+        <ul class="links">
+          <li class="active"><a href="index.html">Projects</a></li>
+          <li><a href="Resume.html">Resume</a></li>
+        </ul>
+        <ul class="icons">
+          <a
+            href="https://www.linkedin.com/in/mariovt"
+            class="icon brands fa-linkedin"
+            target="_blank"
+            ><span class="label">LinkedIn</span></a
+          >
+        </ul>
+      </nav>
+
+      <!-- Main -->
+      <div id="main">
+        <!-- Post -->
+        <section class="post">
+          <header class="major">
+            <h1>
+              <a href="https://feia.bg" target="_blank">Feia Pregnancy</a>
+            </h1>
+            <p>
+              This is a mobile app, made with React Native. It is currently
+              available on the market (Android and iOS)
+            </p>
+          </header>
+          <div>
+            <a href="https://feia.bg" target="_blank">
+            <img src="images/feia-pregnancy.png"  style="float:left; margin-right:30px" alt=""width="220" height="440" />
+          </a>
+        </div>
+          <p>
+            Specially designed app for the needs of pregnant woman. It contains
+            various medical advices, medical recommendations and diagnosis, as
+            well as a collection of "mini-app" applications.
+          </p>
+          <p>
+            I was part of the development team and worked on numerous, front end
+            components in this project, most notably on the "mini-apps" section.
+            It is a collection of smaller applications, each one with a specific
+            goal. Their functions include:<br />
+            - tracking activities like daily steps, using the user's
+            geolocation<br />
+            - doctor's consultations organizer<br />
+            - contraction's counter<br />
+            - yoga exercise for pregnant women (video gallery).<br />
+            - Mozart for babies (music player with collection of songs)<br />
+            and others...
+          </p>
+          <p>
+            It was my responsibility to put together some of these apps, either
+            completely from scratch or partially. Some of them required more
+            complex app state management, with the use of Redux.
+          </p>
+        </section>
+        <section>
+          <h5>Code snippet from MozartScreen functional component</h5>
+          <pre class="line-numbers">
+          <code class="language-css">
+            export default function MozartScreen() {
+              let getDownloadedSongs = useSelector(RSApp.getMozartDownloadedSongs);
+              getDownloadedSongs = getDownloadedSongs || [];
+            
+              const defaultAppColor = Theme.Mozart;
+              const { translateStatic } = useTranslations();
+            
+              const currentParent = useSelector(RSParents.getAppsData);
+              const parentType = useSelector(RSAuth.getParentType);
+              const lang = useSelector((state: RootState) => state.app?.lang);
+              const dispatch = useDispatch();
+              const [downloadedSongs, setDownloadedSong] = useState(getDownloadedSongs);
+            
+              const [blurEffect, setBlurEffect] = useState&ltboolean>(false);
+              const [blurRef, setBlurRef] = useState&ltany>(null);
+              const [blurRefSlider, setBlurRefSlider] = useState&ltany>(null);
+              const [loadingTime, setLoadingTime] = useState&ltboolean>(false);
+            
+              const [showInfoModal, setShowInfoModal] = useState(false);
+              const [currentTime, setCurrentTime] = useState(0);
+              const [endTime, setEndTime] = useState(0);
+              const [isLoopMode, setIsLoopMode] = useState&ltboolean>(false);
+              const [isShuffleMode, setIsShuffleMode] = useState&ltboolean>(false);
+              const [move, setMove] = useState(0);
+            
+              const videoPlayerRef = useRef&ltany>(null);
+              const pageRef = useRef(null);
+              const pageRefSlider = useRef(null);
+              const arrowIconRef = useRef(null);
+              const [isNowPlaying, setIsNowPlaying] = useState&ltboolean>(
+                videoPlayerRef?.current?.state?.isPlaying || true
+              );
+            
+              let mozartSongProps: any =
+                currentParent?.mine?.miniAppsData?.mozart?.mozartSongPropsFromDB || [];
+              const [songsDB, setSongsDB] = useState&ltArray&ltany>>([]); // songs
+              const [selectedSong, setSelectedSong] = useState&ltany>({});
+              const getSongProps = (selectedSong: songPropTypes, songsDB: Array&ltany>) => {
+                let songInfo = (songsDB &&
+                  songsDB.find((element: any) => element.song == selectedSong.song)) || {
+                  url: "",
+                  song: 0,
+                  sizeMb: 0,
+                  name: "",
+                  duration: ""
+                };
+                let result = {
+                  name: songInfo.name,
+                  songUrl: songInfo.url,
+                  sizeMb: songInfo.sizeMb,
+                  song: songInfo.song,
+                  duration: songInfo.duration
+                };
+                return result;
+              };
+              const [songProps, setSongProps] = useState&ltany>(
+                getSongProps(selectedSong, songsDB)
+              );
+              // let songProps = getSongProps(selectedSong, songsDB);
+            
+              const getSongPropsFromDB = async () => {
+                let resultDB = await PouchDBUtil.getMaster().query(
+                  "all/doc-by-type_subType",
+                  {
+                    key: ["mozartSong", null],
+                    include_docs: true
+                    // attachments: true
+                  }
+                );
+                if (resultDB) {
+                  resultDB = resultDB.rows.map((el: any) => el.doc);
+                  return resultDB;
+                }
+              };
+            
+              useEffect(() => {
+                if (
+                  typeof mozartSongProps == "undefined" ||
+                  mozartSongProps.length == 0 ||
+                  (mozartSongProps[0]?._55 && mozartSongProps[0]?._55.length == 0)
+                ) {
+                  // step (1): request songs from DB and record them in redux state
+                  // then load them from there to the local state
+                  // (this step will be triggered on first run only)
+                  const songs = getSongPropsFromDB() || [];
+            
+                  console.log("get songs from DB");
+                  getSongPropsFromDB()
+                    .then(() => {
+                      dispatch(
+                        RAParents?.addMozartSongPropsFromDB(parentType, songs as any, true)
+                      );
+                      setSongsDB(mozartSongProps[0]?._55);
+                    })
+                    .catch((err: any) => {
+                      console.log(`Error with getting songs from database: `, err);
+                    });
+                } else if (typeof songsDB == "undefined" || songsDB.length == 0) {
+                  // step (2): this is a backup
+                  // if step 1 was not completed successfuly and
+                  // songs were not recieved from redux state, retry
+                  setSongsDB(mozartSongProps[0]?._55);
+                }
+            
+                if (
+                  videoPlayerRef &&
+                  videoPlayerRef.current &&
+                  typeof songsDB != "undefined" &&
+                  songsDB.length > 0
+                ) {
+                  // step (4): start the player (this will be repeated after every song switch)
+                  videoPlayerRef.current.resume();
+                  setIsNowPlaying(true);
+                } else if (songsDB && songsDB.length > 0) {
+                  // step (3): load song props to local state and setSelectedSong
+                  setSongProps(
+                    getSongProps(getCombinedSongList(currentParent, songsDB)[0], songsDB)
+                  );
+                  setSelectedSong(getCombinedSongList(currentParent, songsDB)[0]);
+                }
+              }, [songsDB, selectedSong]);
+            
+              const goToNextSong = (next: boolean) => {
+                // reset time before loading new song
+                setCurrentTime(0);
+                setEndTime(0);
+            
+                let song = next
+                  ? playSong(selectedSong, isShuffleMode, currentParent, songsDB).next
+                  : playSong(selectedSong, isShuffleMode, currentParent, songsDB).previous;
+            
+                if (song) {
+                  setSongProps(getSongProps(song, songsDB));
+                  setSelectedSong(song);
+                }
+              };
+            
+              const playPause = () => {
+                setIsNowPlaying(!isNowPlaying);
+            
+                if (isNowPlaying) {
+                  videoPlayerRef.current.pause();
+                } else {
+                  videoPlayerRef.current.resume();
+                }
+              };
+            
+              const switchToSong = (song: songPropTypes) => {
+                setSelectedSong(song);
+                setSongProps(getSongProps(song, songsDB));
+                videoPlayerRef.current.resume();
+              };
+            
+              const songData = (downloadedSongs: Array&ltany>) => {
+                let nameAndPath = songProps.songUrl.slice(
+                  songProps.songUrl.lastIndexOf("/") + 1
+                );
+                let songName = Number(nameAndPath.slice(0, nameAndPath.lastIndexOf(".")));
+                let fileFormat = nameAndPath.slice(nameAndPath.lastIndexOf("."));
+                let isDownloaded = downloadedSongs.indexOf(songName) >= 0;
+            
+                return { songName, fileFormat, isDownloaded };
+              };
+            
+              const downloadFile = (downloadedSongs: Array&ltany>) => {
+                let { songName, fileFormat, isDownloaded } = songData(downloadedSongs);
+            
+                setLoadingTime(true);
+            
+                // Remove or add song to downloaded list
+                if (isDownloaded) {
+                  let newDownloads = [...downloadedSongs];
+                  newDownloads = newDownloads.filter(el => el != songName);
+                  setDownloadedSong(newDownloads);
+            
+                  dispatch(RAApp.toggleDownloadedMozartSong(songName, !isDownloaded));
+                  setLoadingTime(false);
+                  return;
+                }
+            
+                const downloadDest = `${RNFS.DocumentDirectoryPath}/${songName}.${fileFormat}`;
+                const result = RNFS.downloadFile({
+                  fromUrl: songProps.songUrl,
+                  toFile: downloadDest,
+                  cacheable: true
+                });
+            
+                result.promise
+                  .then(() => {
+                    console.log("Song is downloaded");
+            
+                    let newDownloads = [...downloadedSongs];
+                    newDownloads.push(songName);
+                    setDownloadedSong(newDownloads);
+                    dispatch(RAApp.toggleDownloadedMozartSong(songName, !isDownloaded));
+                    setLoadingTime(false);
+                  })
+                  .catch(err => {
+                    setLoadingTime(false);
+                    console.log(`Error with downloading song ${songName}`, err);
+                  });
+              };
+            
+              const rotatePercentbar = {
+                // not a magic number!
+                // this dynamically turns current song time to percents, to rotation degrees
+                // 0% of song completed = 0deg; 100% of song completed = 180deg
+                from: {
+                  transform: [
+                    {
+                      rotateZ:
+                        (currentTime > 0 &&
+                          endTime > 0 &&
+                          `${(currentTime / endTime) * 100 * 1.8}deg`) ||
+                        "0deg"
+                    }
+                  ]
+                },
+                to: {
+                  transform: [
+                    {
+                      rotateZ:
+                        (currentTime > 0 &&
+                          endTime > 0 &&
+                          `${(currentTime / endTime) * 100 * 1.8}deg`) ||
+                        "0deg"
+                    }
+                  ]
+                }
+              };
+              const rotateLoading = {
+                from: {
+                  transform: [{ rotateZ: "0deg" }]
+                },
+                to: {
+                  transform: [{ rotateZ: "360deg" }]
+                }
+              };
+            
+              const rightHeadphoneDynamicColor = {
+                backgroundColor:
+                  currentTime > endTime - 1 && currentTime !== 0 && endTime !== 0
+                    ? Theme.drinkWaterSecondaryColor
+                    : Theme.lightGray2
+              };
+            
+              ...
+
+          </code>
+        </pre>
+
+        <h5>Code snippet from MozartPlayList functional component</h5>
+          <pre class="line-numbers">
+          <code class="language-css">
+import React, { useEffect, useState } from "react";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Platform,
+  ScrollView
+} from "react-native";
+
+import Theme from "../../../../../Theme";
+import Screen from "../../../../../constants/Screen";
+import {
+  songPropTypes,
+  toggleFavorite,
+  getSavedFavorite,
+  getIsFavorite
+} from "../mozartUtil";
+// import { songs } from "./songs";
+import { useTranslations } from "../../../../../utils/hooks/TranslationHooks";
+import IconII from "react-native-vector-icons/Ionicons";
+import { useDispatch } from "react-redux";
+import { styles } from "../styles/playlistStyles";
+
+export default function Playlist({
+  color,
+  selectedSong,
+  switchToSong,
+  currentParent,
+  parentType,
+  songsDB
+}: {
+  color: string;
+  selectedSong: any;
+  switchToSong: Function;
+  currentParent: any;
+  parentType: any;
+  songsDB: any;
+}) {
+  const { translateStatic } = useTranslations();
+  const dispatch = useDispatch();
+  let favoriteSongs = getSavedFavorite(currentParent);
+
+  const getSongProps = (selectedSong: songPropTypes, songsDB: Array<any>) => {
+    let songInfo = songsDB.find(
+      (element: any) => element.song == selectedSong.song
+    ) || {
+      url: "",
+      song: 0,
+      sizeMb: 0,
+      name: "",
+      duration: ""
+    };
+
+    let result = {
+      name: songInfo.name,
+      songUrl: songInfo.url,
+      sizeMb: songInfo.sizeMb,
+      song: songInfo.song,
+      duration: songInfo.duration
+    };
+
+    return result;
+  };
+
+  const songView = (song: songPropTypes, index: number) => {
+    let newSong = songsDB.find((el: any) => el.song == song.song) || songsDB[0];
+    let isFav = getIsFavorite(currentParent, newSong?.song || -1);
+    let isSelected = selectedSong == newSong;
+
+    return (
+      &ltTouchableOpacity ;
+        onPress={() => {
+          switchToSong(newSong);
+        }}
+        key={index}
+        style={styles.songRowParentContainer}
+      >
+      &lt View style={styles.songNameContainer}
+          {newSong ? (
+            &ltText
+              style={[
+                styles.songTextItems,
+                { color: isSelected ? Theme.color2 : Theme.gray1 }
+              ]}
+            >
+              {translateStatic(getSongProps(newSong, songsDB).name)}
+              &lt/Text>
+          ) : null}
+        />
+
+        &ltView style={styles.timeAndIconContainer}>
+        &ltText style={[styles.songTextItems, { color: Theme.gray1 }]}>
+            {getSongProps(newSong, songsDB).duration}
+            &lt/Text>
+            &ltTouchableOpacity
+            onPress={() =>
+              toggleFavorite(song, currentParent, dispatch, parentType)
+            }
+            style={styles.heartIconContainer}
+          >
+          &ltIconII
+              name={"md-heart"}
+              size={Math.round(Screen.screenWidth * 0.05)}
+              color={isFav ? color : Theme.gray3}
+            />
+            &lt/TouchableOpacity>
+        &lt/View>
+      &lt/&gtTouchableOpacity>
+    );
+  };
+
+  return (
+    &ltScrollView
+      style={styles.scrollViewContainer}
+      showsVerticalScrollIndicator={false}
+    >
+      {songsDB &&
+        songsDB
+          .filter((el: any) => favoriteSongs.indexOf(el.song) > -1)
+          .sort((a: any, b: any) => a.song - b.song)
+          .map(songView)}
+      {songsDB &&
+      favoriteSongs.length > 0 &&
+      favoriteSongs.length !=
+        songsDB?.filter((el: any) => el.song > -1).length ? (
+          &ltView style={styles.songDeviderStyleLine} />
+      ) : null}
+      {songsDB &&
+        songsDB
+          .filter(
+            (el: any) => el.song > -1 && favoriteSongs.indexOf(el.song) == -1
+          )
+          .sort((a: any, b: any) => a.song - b.song)
+          .map(songView)}
+      &ltView style={styles.dummyPlaceholderView} />
+    &lt/ScrollView>
+  );
+}
+
+          </code>
+        </pre>
+        </section>
+      </div>
+
+      <!-- Copyright -->
+      <div id="copyright">
+        <ul>
+          <li>&copy; Mario Vatkov</li>
+          <li>Design: <a href="https://html5up.net">HTML5 UP template</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<!--
+	Massively by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+  <head>
+    <title>DHL Dispatcher</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript
+      ><link rel="stylesheet" href="assets/css/noscript.css"
+    /></noscript>
+  </head>
+  <body class="is-preload">
+    <!-- Wrapper -->
+    <div id="wrapper">
+      <!-- Header -->
+      <header id="header">
+        <a href="index.html" class="logo">Portfolio</a>
+      </header>
+
+      <!-- Nav -->
+      <nav id="nav">
+        <ul class="links">
+          <li class="active"><a href="index.html">Projects</a></li>
+          <li><a href="Resume.html">Resume</a></li>
+        </ul>
+        <ul class="icons">
+          <a
+            href="https://www.linkedin.com/in/mariovt"
+            class="icon brands fa-linkedin"
+            target="_blank"
+            ><span class="label">LinkedIn</span></a
+          >
+        </ul>
+      </nav>
+
+      <!-- Main -->
+      <div id="main">
+        <!-- Post -->
+        <section class="post">
+          <header class="major">
+            <h1>
+              <a>DHL Dispatcher</a>
+            </h1>
+            <p>
+              This is a private web app, created with React, specifically for
+              the needs of DHL company. It is currently in use in several
+              countries, including Germany and France.
+            </p>
+          </header>
+          <div>
+            <img
+              src="images/dhl-dispatcher.png"
+              style="float: right; margin-left: 30px"
+              alt=""
+              width="300"
+              height="280"
+            />
+          </div>
+          <p>
+            Logistics platform for dispatching and tracking packages and trucks.
+            The goal of the project was to create a new, up to date, front end
+            application which had to work with their existing back end setup, in
+            order to replace the previous, outdated system.
+          </p>
+          <p>
+            For this, our team developed an entirely new web based app from the
+            ground up.
+          </p>
+          <p>
+            Requirements and features:<br />
+            - full integration with DHL's back end system - support of corporate
+            approved browsers, including some of the older versions of Internet
+            Explorer<br />
+            - introduction of new features, based on the client's requirements
+            and approval <br />
+            - updated UX and layout design<br />
+            - emphasis on precision and reliability<br />
+          </p>
+          <p>
+            I worked on various components of the main Dispatch screen. Most
+            important task I was assigned was to develop an external, reusable
+            calendar module, responsible for tracking time. I developed this
+            custom library to allow reusability in the main application, by
+            providing different configurations and combinations of pickers,
+            working synchronously with one another. The module uses a 2-way data
+            communication model. It can translate user input to the main
+            application or receive and display time from the main application to
+            the user. All time manipulation actions, in the main DHL Dispatch
+            application are handled by this module.
+          </p>
+          <p>
+            Main features of Calendar component:<br />
+            - set/display dates (days, months, years) <br />
+            - set/display times (minutes, hours) <br />
+            - set/display time-zones<br />
+          </p>
+          <p>
+            Additional features:<br />
+            - various keyboard shortcuts<br />
+            - calculating periods of time (ex.: typing inside textInput:
+            "14/08/2020 + 3 weeks")<br />
+            - dynamic parsing (ex.: typing inside textInput: "today", or
+            "nextweek + 2 days")<br />
+            - scrolling through months with advanced algorithm<br />
+          </p>
+        </section>
+        <section>
+          <h5>
+            Code snippet from main Calendar class, inside the render function
+          </h5>
+          <pre class="line-numbers">
+          <code class="language-css">
+        &ltdiv
+            tabIndex={0}
+            id={"mainCalendarContainer"}
+            className={rangeLvl == 0 ? "scrollContainer" : "scrollContainerMonths"}
+            type={(rangeLvl > 0 && "range") || "month"}
+            onWheel={({ deltaY }) => {
+                this.setState({
+                    scroll: scroll - deltaY, // use "+" for inverted scroll
+                })
+            }}
+        >
+            {rangeLvl == 0 &&
+              combinedWeeks.map((week, key) => (
+                &ltdiv
+                      key={key}
+                      className="week"
+                      {...weekProps}
+                      // scroll algorithm: it scrolls each week row individually into place
+                      style={{
+                          top: scrollOffset + ((scroll + [
+                              scroll <= 0 ? (scroll < -20 ? 80 : -60) : -60,
+                              scroll <= 0 ? (scroll < -40 ? 100 : -40) : (scroll > 120 ? -180 : -40),
+                              scroll <= 0 ? (scroll < -60 ? 120 : -20) : (scroll > 100 ? -160 : -20),
+                              scroll <= 0 ? (scroll < -80 ? 140 : 0) : (scroll > 80 ? -140 : 0),
+                              scroll <= 0 ? (scroll < -100 ? 160 : 20) : (scroll > 60 ? -120 : 20),
+                              scroll <= 0 ? (scroll < -120 ? 180 : 40) : (scroll > 40 ? -100 : 40),
+                              scroll <= 0 ? 60 : (scroll > 20 ? -80 : 60),
+                          ][key]) % 140),
+
+                          position: "absolute",
+                          width: "100%",
+                      }}
+                  >
+                      {week && week.map(({ date }, key) => (
+                        &ltdiv key={key} className="dateButtonContainer">
+                          &ltbutton
+                                  disabled={
+                                      (min &&
+                                          moment(date)
+                                              .startOf("day")
+                                              .isBefore(min, "day"))
+                                      || (max &&
+                                          moment(date)
+                                              .endOf("day")
+                                              .isAfter(max, "day"))
+                                      || moment(date)
+                                          .startOf("day")
+                                          .isBefore(moment().add(minGlobalRange, "y"), "day")
+                                      || moment(date)
+                                          .endOf("day")
+                                          .isAfter(moment().add(maxGlobalRange, "y"), "day")
+                                  }
+                                  key={key}
+                                  className={[
+                                      "day",
+                                      ...(date.clone().startOf("month").isSame(month.clone().startOf("month"))
+                                          && [] || ["differentMonth"]),
+                                      ...((hoverStart &&
+                                          date.isBetween(
+                                              moment.min(hoverStart, hoverEnd).startOf("day"),
+                                              moment.max(hoverStart, hoverEnd).endOf("day"),
+                                              null,
+                                              "[]"
+                                          ) && ["hovered"]) ||
+                                          []),
+                                      ...(startTime && endTime && (date.isBetween(
+                                          startTime.clone().startOf("day"),
+                                          enablePeriodSelection && endTime.clone().startOf("day")
+                                          || startTime.clone().startOf("day"),
+                                          null,
+                                          "[]"
+                                      ) && [preselectedDateTime && "selected" || ""]) || [,])
+                                  ].join(" ")}
+                                  onMouseOver={() => {
+                                      if (enableUserInteraction && hoverStart != null) {
+                                          this.setState({
+                                              hoverEnd: moment(date).startOf("day")
+                                          });
+                                      }
+                                  }}
+                                  onClick={() => {
+
+                                      if (enablePeriodSelection) {
+                                          this.setState(
+                                              (enablePeriodSelection &&
+                                                  hoverStart == null && {
+                                                  hoverStart: moment(date).startOf("day"),
+                                                  hoverEnd: moment(date).startOf("day")
+                                              }) || {
+                                                  start: moment(hoverStart || date),//.startOf("day"),
+                                                  end: moment(hoverEnd || date),//.endOf("day"),
+                                                  hoverStart: null,
+                                                  hoverEnd: null
+                                              }
+                                          );
+                                          if (hoverStart !== null) {
+                                              setDate(
+                                                  moment(hoverStart),
+                                                  date,
+                                                  true
+                                              )
+                                              selectionInProgress(false)
+                                          } else {
+                                              selectionInProgress(true)
+                                          }
+                                      } else {
+                                          setDate(
+                                              date,
+                                              date,
+                                              true
+                                          )
+                                          getInputStr && getInputStr(reversedDynamicParsing(date), true)
+                                      }
+                                  }}
+                              >
+                                  {date.format("D")}
+                                &lt/button>
+                              &lt/div>
+                        ))}
+                      &lt/div>
+                  ))}
+                &lt/div>
+            
+              ...
+
+          </code>
+        </pre>
+          <p>
+            I used "React.createContext" to handle the high volume of data
+            between different components of the Calendar module, instead of
+            using props which became icreasingly messier as the module grew.
+            This allowed me to subscribe only those components to listen for the
+            change in context that needed to. For this I created 3 separate
+            context providers which covered the needs of all calendar pickers
+            and their configs. They worked as wrappers to those components.
+          </p>
+          <img
+            src="images/calendar-architecture.jpg"
+            alt=""
+            width="800"
+            height="800"
+          />
+
+          <h5>Code snippet from TimeProvider (context provider) class</h5>
+          <pre class="line-numbers">
+          <code class="language-css">
+            export default class TimeProvider extends Component {
+
+              static defaultProps = {
+                  time: null,
+                  min: null,
+                  max: null,
+                  enableUserInteraction: true,
+                  placeHolder: null,
+                  onChange: () => { },
+                  onError: () => { },
+                  calendarStyle: {},
+                  datePropsError: false,
+                  enableTodayButton: false,
+                  timeZone: moment().tz(),
+                  limits: "()",
+                  parseInput: true,
+                  id: 'default',
+                  onInput: () => { },
+              };
+          
+              static getDerivedStateFromProps(props, state) {
+                  let {
+                      time: propsTime,
+                      min: propsMin,
+                      max: propsMax,
+                      timeZone: propsZone,
+                      datePropsError: propsError,
+                      enableTodayButton,
+                      limits,
+                      parseInput,
+                      id
+                  } = props;
+          
+                  let {
+                      startTime: contextTime,
+                      timeZone: contextZone,
+                      oldPropsTime,
+                      oldPropsZone,
+                      datePropsError: contextError,
+                      preselectedDateTime,
+                      inputStr: contextInputStr
+                  } = state;
+          
+                  if (typeof propsTime == 'string') {
+                      parseInput = false
+                  }
+          
+                  let tz = propsZone != oldPropsZone ? propsZone
+                      : contextZone;
+          
+                  if (tz == null || typeof tz == 'undefined') {
+                      tz = moment().tz() || moment.tz.guess(true)
+                  }
+          
+                  let time = parseInput ?
+                      (moment(propsTime != oldPropsTime ? moment(propsTime) : contextTime).tz(tz))
+                      : propsTime != oldPropsTime ? dynamicParsing(propsTime, 2, "return moment") : moment(contextTime)
+          
+                  let m = moment(moment(time).clone().tz(tz)).format("YYYY-MM-DD HH:mm")
+                  let minTZ = moment(moment(propsMin).clone().tz(tz)).format("YYYY-MM-DD HH:mm")
+                  let maxTZ = moment(moment(propsMax).clone().tz(tz)).format("YYYY-MM-DD HH:mm")
+          
+                  let error =
+                      (propsMin || propsMax) && dateTimeError(moment(m), minTZ, maxTZ, limits)
+                      || outOfGlobalRange(moment(m), null)
+                      || propsError
+          
+                  if (preselectedDateTime == false) {
+                      error = true
+                  }
+          
+                  let inputStr = propsTime != oldPropsTime
+                      ? propsTime : contextInputStr
+          
+                  return {
+                      ...state,
+                      startTime: time,
+                      endTime: time,
+                      oldPropsTime: propsTime,
+                      timeZone: tz,
+                      oldPropsZone: propsZone,
+                      min: propsMin && moment(propsMin).tz(tz) || null,
+                      max: propsMax && moment(propsMax).tz(tz) || null,
+                      datePropsError: error,
+                      enableTodayButton,
+                      preselectedDateTime: preselectedDateTime || (propsTime != null),
+                      parseInput,
+                      id,
+                      inputStr
+                  }
+              }
+          
+              constructor(props) {
+                  super(props);
+          
+                  this.state = {
+                      startTime: moment(),
+                      endTime: moment(),
+                      min: null,
+                      max: null,
+                      timeZone: moment().tz(),
+                      datePropsError: false,
+                      preselectedDateTime: false,
+                      prevSelected: [{ startTime: moment(), endTime: moment() }],
+                      hoursOnFocus: true,
+                      inputStr: "",
+                      isValidStr: true,
+          
+                      setTime: this.setTime,
+                      setDate: this.setDate,
+                      setTimeZone: this.setTimeZone,
+                      setPrevSelected: this.setPrevSelected,
+                      setHoursOnFocus: this.setHoursOnFocus,
+                      getInputStr: this.getInputStr
+                  };
+              }
+          
+              componentDidUpdate(prevProps, prevState) {
+                  let {
+                      onChange,
+                      onError,
+                      onInput,
+                      translationLabel
+                  } = this.props;
+                  let {
+                      startTime: oldStartTime,
+                      timeZone: oldTimeZone,
+                      datePropsError: oldError,
+                      inputStr: oldInputStr
+                  } = prevState;
+                  let {
+                      startTime: newStartTime,
+                      datePropsError: contextError,
+                      timeZone: newTimeZone,
+                      prevSelected,
+                      inputStr,
+                      parseInput,
+                      isValidStr
+                  } = this.state;
+          
+                  if (parseInput && newStartTime.isSame(oldStartTime) == false
+                      || oldTimeZone != newTimeZone) {
+                      onChange(newStartTime.valueOf(), newTimeZone)
+                  }
+                  if (contextError != oldError) {
+                      onError(contextError)
+                  }
+                  if (moment(prevSelected[prevSelected.length - 1].startTime)
+                      .isSame(newStartTime) == false
+                  ) {
+                      prevSelected.push({ startTime: newStartTime, endTime: newStartTime })
+                  }
+                  if (inputStr != oldInputStr) {
+          
+                      // callback returns unparsed string from text input
+                      onInput(inputStr, isValidStr)
+                  }
+              }
+          
+              setTime = (start, end, preselected) => {
+                  let { startTime, preselectedDateTime } = this.state;
+          
+                  this.setState({
+                      startTime: concatDateTime(
+                          startTime,
+                          start,
+                      ),
+                      preselectedDateTime: preselected && typeof preselected != 'undefined'
+                          ? preselected : preselectedDateTime
+                  })
+              }
+          
+              setDate = (start, end, preselected) => {
+                  let { startTime, preselectedDateTime } = this.state;
+          
+                  this.setState({
+                      startTime: concatDateTime(
+                          start,
+                          startTime,
+                      ),
+                      preselectedDateTime: preselected && typeof preselected != 'undefined'
+                          ? preselected : preselectedDateTime
+                  })
+              }
+          
+              setTimeZone = (timeZone) => {
+          
+                  this.setState({
+                      timeZone
+                  })
+              }
+              setPrevSelected = () => {
+                  let { prevSelected } = this.state;
+          
+                  if (prevSelected.length > 1) {
+                      prevSelected.pop()
+                  }
+              }
+          
+              setHoursOnFocus = (hoursOnFocus) => {
+          
+                  this.setState({
+                      hoursOnFocus
+                  })
+              }
+          
+              getInputStr = (inputStr, isValidStr) => {
+          
+                  this.setState({
+                      inputStr,
+                      isValidStr
+                  })
+              }
+          
+              render() {
+                  let { children } = this.props;
+          
+                  return (
+                    &ltTimeContext.Provider
+                          value={this.state}
+                      >
+                          {children}
+                          &lt/TimeContext.Provider>
+          
+                  )
+              }
+          }
+          </code>
+        </pre>
+          <h5>Dynamic parsing util</h5>
+
+          <pre class="line-numbers">
+            <code class="language-css">
+              export function dynamicParsing(str, parcing = 2, returnType = "timestamp") {
+
+                // SUPPORTED KEY WORDS
+                const dictionary_A = {
+                    "now": moment(),
+                    "today": moment().startOf('day'),
+                    "yesterday": moment().startOf('day').add(-1, 'day'),
+                    "yestarday": moment().startOf('day').add(-1, 'day'), // same as "yesterday"
+                    "previousday": moment().startOf('day').add(-1, 'day'), // same as "yesterday"
+                    "tomorrow": moment().startOf('day').add(1, 'day'),
+                    "nextday": moment().startOf('day').add(1, 'day'), // same as "tomorrow"
+                    "thisweek": moment().startOf('isoWeek'),
+                    "lastweek": moment().startOf('isoWeek').add(-1, 'week'),
+                    "nextweek": moment().startOf('isoWeek').add(1, 'week'),
+                    "thismonth": moment().startOf('month'),
+                    "lastmonth": moment().startOf('month').add(-1, 'month'),
+                    "nextmonth": moment().startOf('month').add(1, 'month'),
+                    "thisyear": moment().startOf('year'),
+                    "lastyear": moment().startOf('year').add(-1, 'year'),
+                    "nextyear": moment().startOf('year').add(1, 'year'),
+                }
+            
+                // SUPPORTED PERIOD TYPE KEY WORDS
+                const dictionary_B = {
+                    "m": "minutes",
+                    "minute": "minutes",
+                    "minutes": "minutes",
+                    "h": "hours",
+                    "hour": "hours",
+                    "hours": "hours",
+                    "d": "days",
+                    "day": "days",
+                    "days": "days",
+                    "w": "weeks",
+                    "week": "weeks",
+                    "weeks": "weeks",
+                    "mon": "months",
+                    "month": "months",
+                    "months": "months",
+                    "y": "years",
+                    "year": "years",
+                    "years": "years",
+                }
+            
+                let isDateValue = parcing == 2 || parcing == null
+            
+                // BEFORE PARSING, MAKE SOME CHECKS AND EXIT THE FUNCION IF NECCESSARY
+                // ============================================================================
+                if (typeof str !== 'string') {
+                    // if it's not a string, then it's a timestamp or moment() obj
+                    return str // do nothing
+                }
+                if (str == "") return ""
+            
+                if (str.split(" ").length < 2 // only 1 word or less
+                    && str.match("\\d") !== null // numbers detected
+                ) {
+                    if (str.match(/[a-zA-Z]/) !== null) { // letters detected
+                        // if there are letters mixed with the numbers, it's invalid str
+                        return false
+                    }
+                    else {
+                        // if it's a simple date/time value (11/08/2020 or 12:30), do not parse
+                        return returnType == "timestamp"
+                            ? moment(moment(str, isDateValue && validCalendarFormat || format24Hours).format()).valueOf()
+                            : moment(moment(str, isDateValue && validCalendarFormat || format24Hours).format())
+                    }
+                }
+                if (str.split(" ").length < 2 // only 1 word or less
+                    // && str.match("\\d") == null // no numbers detected
+                ) {
+                    // check if string is a valid keyword (from dictionary) before continue parsing
+                    if (dictionary_A[str] == null || typeof dictionary_A[str] == 'undefined') {
+                        return false
+                    }
+                }
+                // ============================================================================
+            
+                // remove unnacessary double spaces from the string before parcing
+                // we need this to ignore random spaces and still treat the str as valid
+                str = str.replace(/\s+/g, " "); // remove spaces in the middle of str
+                str = str.trim(); // trim() method > IE8 // remove spaces at the start and end of str
+            
+                let strParts = str.toLowerCase().split(" ")
+                // console.log('strParts ', strParts)
+            
+                // Correct the string. Turn this (now +1d) into this (now + 1d)
+                if (strParts.length == 2) {
+                    strParts = [strParts[0], strParts[1].substring(0, 1), strParts[1].substring(1,)]
+                }
+            
+                // Detect additional case when time value is added like this (+ 14:30)
+                // if the last word of str contains ":" symbol and it contains numbers,
+                // then it must be something like this (14:30) 
+                if (strParts[2] && isDateValue == false
+                    && strParts[2].indexOf(":") > 0 && strParts[2].match("\\d") !== null) {
+            
+                    strParts = [
+                        strParts[0], strParts[1],
+                        `${moment.duration(strParts[2]).asMinutes()}`, // turn 1:20 to 80 minutes
+                        'minutes'
+                    ]
+                }
+            
+                // Correct the string. Turn this (now +1 d) into this (now + 1 d)
+                if (strParts.length == 3 && strParts[2].match("\\d") == null) {
+                    strParts =
+                        [strParts[0], strParts[1].substring(0, 1), strParts[1].substring(1,), strParts[2]]
+                }
+            
+                // Correct the string and get the values.
+                // Turn this (now + 1d) into this (now + 1 d)
+                let strSubParts = strParts[2] && strParts[2].match(/[a-z]+|[^a-z]+/gi) || [""];
+                let periodAmount = strParts.length > 3 ? strParts[2] : strSubParts[0]
+                let periodType = strParts.length > 3
+                    ? dictionary_B[strParts[3]] : dictionary_B[strSubParts[1]]
+            
+                let date = dictionary_A[strParts[0]]
+                    || moment(strParts[0], isDateValue && validCalendarFormat || format24Hours).format()
+            
+                const operators = {
+                    "+": parseInt(periodAmount),
+                    "-": -parseInt(periodAmount)
+                }
+                let operator = operators[strParts[1]]
+            
+                if (strParts.length > 1 && (operators[strParts[1]] == null
+                    || typeof operators[strParts[1]] == 'undefined')) {
+                    // if string > 1 and no "+" or "-" symbol are present, str is invalid
+                    return false
+                }
+                if (strParts.length > 2 && strParts[2].match("\\d") == null) {
+                    // if the 3rd word does not contain numbers, str is invalid
+                    return false
+                }
+                // console.log("date: ", moment(date).format("DD/MM/YYYY HH:mm"))
+                // console.log("strSubParts: ", strSubParts)
+                // console.log("periodAmount: ", periodAmount)
+                // console.log("periodType: ", periodType)
+                // console.log("testDate_2: ", moment(date, validCalendarFormat).format())
+            
+                let result;
+                if (strParts.length == 1) {
+                    result = moment(dictionary_A[strParts[0]])
+                    periodType = true
+                }
+                else {
+                    result = moment(date).add(operator, periodType)
+                }
+            
+                if (result.isValid() && periodType) {
+                    // console.log("result1: ", moment(result).format("DD/MM/YYYY HH:mm"))
+                    // console.log("result.tz() ", result.tz())
+                    // console.log("result2: ", result.valueOf())
+            
+                    if (returnType == "timestamp") {
+                        return result.valueOf()
+                    }
+                    else {
+                        return result
+                    }
+                }
+                else return false
+            }
+            </code>
+          </pre>
+        </section>
+      </div>
+
+      <!-- Copyright -->
+      <div id="copyright">
+        <ul>
+          <li>&copy; Mario Vatkov</li>
+          <li>Design: <a href="https://html5up.net">HTML5 UP template</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>
