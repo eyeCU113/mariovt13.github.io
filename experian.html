@@ -84,16 +84,7 @@
           <h5>Reusable dropdown component</h5>
           <pre class="line-numbers">
           <code class="language-css">
-import React, { Component } from "react";
 
-export default class Dropdown extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {};
-  }
-
-  render() {
     let { options, placeHolder, className, onChange, style } = this.props;
 
     let useIndex = false;
@@ -126,42 +117,36 @@ export default class Dropdown extends Component {
           ))}
           &lt/select>
     );
-  }
-}
             
               ...
           </code>
         </pre>
 
           <h5>
-            Rendering the amount of account views comming from the back end
-            server
+            Rendering dynamically recieved payment provider options through
+            radio buttons
           </h5>
           <pre class="line-numbers">
           <code class="language-css">
-            {view == "Accounts" &&
-            actionViews &&
-            actionViews.map((item, i) => (
-              &ltAccountView
-                key={i}
-                id={i}
-                title={actionViewTitles[i]}
-                finItems={finItems[i]}
-                buttons={accountButtons}
-                paymentSubmited={paymentSubmited[i]}
-                arrangementSubmited={arrangementSubmited[i]}
-                paymentSubmitedFromAccView={(viewId) => {
-                  this.setState({
-                    viewId,
-                  });
-                }}
-                arrangementSubmitedFromAccView={(viewId) => {
-                  this.setState({
-                    viewId,
-                  });
-                }}
-              />
-            ))}
+            {paymentProvider &&
+              paymentProvider.map((item, i) => (
+                &ltlabel key={i} className="labelRow">
+                  &ltinput
+                    key={i}
+                    id={item}
+                    value={item}
+                    type="radio"
+                    className="radioButton"
+                    name="radio"
+                    checked={item == checked}
+                    onChange={() => {}}
+                    onClick={() => {
+                      setChecked(document.getElementById(item)?.value || "");
+                    }}
+                  />
+                  &ltp className="regularText">{item}/p>
+                  &lt/label>
+              ))}
 
           </code>
         </pre>
@@ -239,6 +224,7 @@ export default class Dropdown extends Component {
 
               ...
             </code>
+            <p class="active"><a href="index.html">Back to projects</a></p>
           </pre>
         </section>
       </div>
