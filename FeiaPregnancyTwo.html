@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<!--
+	Massively by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+  <head>
+    <title>Feia Pregnancy</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript
+      ><link rel="stylesheet" href="assets/css/noscript.css"
+    /></noscript>
+  </head>
+  <body class="is-preload">
+    <!-- Wrapper -->
+    <div id="wrapper">
+      <!-- Header -->
+      <header id="header">
+        <a href="index.html" class="logo">Portfolio</a>
+      </header>
+
+      <!-- Nav -->
+      <nav id="nav">
+        <ul class="links">
+          <li class="active"><a href="index.html">Projects</a></li>
+          <li><a href="Resume.html">Resume</a></li>
+        </ul>
+        <ul class="icons">
+          <a
+            href="https://www.linkedin.com/in/mariovt"
+            class="icon brands fa-linkedin"
+            target="_blank"
+            ><span class="label">LinkedIn</span></a
+          >
+        </ul>
+      </nav>
+
+      <!-- Main -->
+      <div id="main">
+        <!-- Post -->
+        <section class="post">
+          <header class="major">
+            <h1>
+              <a href="https://feia.bg" target="_blank">Feia Pregnancy 2.0</a>
+            </h1>
+            <p>
+              This is a mobile app, made with React Native. It is currently in
+              production and expected to hit the market in the 3rd quarter of
+              2022. It is a continuation of the previously lunched Feia
+              Pregnancy app, but with entirely new design, updated content
+              information and some new cloud features. Unlike its predecessor,
+              this one is aiming for international markets and hoping to become
+              a global leader in its field.
+            </p>
+          </header>
+          <div>
+            <a href="https://feia.bg" target="_blank">
+              <img
+                src="images/feia-pregnancy-two.png"
+                style="float: left; margin-right: 30px"
+                alt=""
+                width="220"
+                height="440"
+              />
+            </a>
+          </div>
+          <p>
+            Specially designed app for the needs of pregnant woman. It contains
+            various medical advices, medical recommendations and diagnosis, as
+            well as a collection of "mini-app" applications.
+          </p>
+          <p>
+            I was part of the development team and worked on many, front end
+            tasks in this project, most notably the numerous article sections
+            and their coresponding custom components, including:<br />
+            - accordion component (for convenient presentation of information to
+            the user, when they click on the title of the article, with smooth
+            animations)<br />
+            - favorites list component (where the user picks their preferred
+            articles, which are then saved to their account in the cloud)<br />
+            - search component (which allows the user to quickly filter the rich
+            collection of articles and easily find what they need)<br />
+            and others...
+          </p>
+          <p>
+            I worked on these and many other components of the app. Some of the
+            external libraries and services which we used in the development
+            process include: <br />
+            React Navigation (for efficient stack navigation architecture),
+            Redux (app state management), Fuse.js (advanced search algorithm),
+            Firebase (cloud services) - Firestore and cloud functions. For some
+            of them we collaborated closely with colleagues from the back-end
+            team.
+          </p>
+        </section>
+        <section>
+          <h5>Code snippet from FavoriteListScreen functional component</h5>
+          <pre class="line-numbers">
+          <code class="language-css">
+  ...
+
+  useFocusEffect(
+    React.useCallback(() => {
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [showSliderPopup]),
+  );
+
+  useEffect(() => {
+    cacheImage();
+
+    if (isMounted.current) {
+      if (isExams) {
+        getExamArticles();
+      } else {
+        getArticles();
+      }
+    }
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    defaultArticles &&
+      defaultArticles.length > 0 &&
+      searchAndSortArticles(defaultArticles);
+  }, [searchVal]);
+
+  const cacheImage = () => {
+    let img = articlesData.img !== '' ? articlesData.img : articlesData.icon;
+    CacheUtil.cacheImages(CacheUtil.CATEGORY, [articlesData._id], [img]);
+  };
+
+  function searchAndSortArticles(articles: any) {
+    let filteredArticles = articles;
+
+    if (searchVal) {
+      filteredArticles = searchFilter(articles, searchVal, currentLocale);
+    }
+
+    filteredArticles = sortArticles(
+      filteredArticles,
+      currentLocale,
+      favoriteArticles,
+    );
+    setFilteredArticles(filteredArticles);
+  }
+
+  async function getArticles() {
+    let articles = await DBUtil.getArticlesByCatAndWeek(articlesCatID);
+
+    articles = removeArticlesWithoutTranslation(
+      articles,
+      currentLocale,
+      isFamilyTasks,
+    );
+    articles = sortArticles(articles, currentLocale, favoriteArticles);
+
+    if (isMounted.current) {
+      setFilteredArticles(articles);
+      setDefaultArticles(articles);
+      setIsLoading(false);
+    }
+  }
+
+  async function getExamArticles() {
+    const indexLists: any = articlesData.children.findIndex(
+      (item: any) => item.catType == 'all-info',
+    );
+
+    const indexQuestion = articlesData.children.findIndex(
+      (item: any) => item.catType == 'question',
+    );
+
+    const nameOfAllExams =
+      articlesData?.children[indexLists]?.name || 'See All Exams';
+    const nameOfDoctorQuestions =
+      articlesData?.children[indexQuestion]?.name || 'Questions To The Doctor';
+    const questionsCatID = articlesData.children[indexQuestion].id;
+
+    const childrensList = articlesData?.children[indexLists]?.children;
+    let examArticlesCatID: string;
+    let childrenName: string;
+    let index;
+
+    if (currentWeek < 12) {
+      index = childrensList.findIndex(
+        (item: any) => item.catType == 'first-quarter',
+      );
+      childrenName = childrensList[index].name;
+      examArticlesCatID = childrensList[index].id;
+    } else if (currentWeek > 12 && currentWeek < 25) {
+      index = childrensList.findIndex(
+        (item: any) => item.catType == 'second-quarter',
+      );
+      childrenName = childrensList[index].name;
+      examArticlesCatID = childrensList[index].id;
+    } else {
+      index = childrensList.findIndex(
+        (item: any) => item.catType == 'third-quarter',
+      );
+      childrenName = childrensList[index].name;
+      examArticlesCatID = childrensList[index].id;
+    }
+
+    let examArticles = await DBUtil.getArticlesByCatAndWeek(examArticlesCatID);
+    let questionsArticles = await DBUtil.getArticlesByCatAndWeek(
+      questionsCatID,
+    );
+
+    examArticles = removeArticlesWithoutTranslation(
+      examArticles,
+      currentLocale,
+    );
+    questionsArticles = removeArticlesWithoutTranslation(
+      questionsArticles,
+      currentLocale,
+      true,
+    );
+
+    examArticles = sortArticles(examArticles, currentLocale, favoriteArticles);
+    questionsArticles = sortArticles(
+      questionsArticles,
+      currentLocale,
+      favoriteArticles,
+    );
+
+    if (isMounted.current) {
+      setHeaderDesription(childrenName);
+      setFilteredArticles(examArticles);
+      setDefaultArticles(examArticles);
+      setQuestionArticles(questionsArticles);
+      setExamFooterNames({
+        nameOfAllExams: nameOfAllExams,
+        nameOfDoctorQuestions: nameOfDoctorQuestions,
+      });
+      setIsLoading(false);
+    }
+  }
+
+  const chooseComponent = React.useMemo(() => {
+    return (
+      (isAccordionComponent && (
+        &ltCustomAccordion
+          articleData={filteredArticles || []}
+          usePlusButton={isExams ? '#CCA3CD' : '#A6C8CD'}
+          onPlusButtonPress={(val: {viewed: boolean; title: string}) => {
+            isExams ? setExamOptions(val) : setSymptomsOptions(val);
+          }}
+          useFlatlist
+        />
+      )) || (
+        &ltFavorites
+          favData={filteredArticles || []}
+          currentLocale={currentLocale}
+          isHeartIcon={isArticles}
+          imageSource={articlesData._id}
+        />
+      )
+    );
+  }, [filteredArticles, favoriteArticles, viewedArticles]);
+
+  return (
+    &ltKeyboardAvoidingView
+      behavior="height"
+      enabled
+      style={{backgroundColor: Theme.white, flex: 1}}
+    >
+      &ltBackHeader
+        onPress={() => {
+          onPress ? onPress() : goBack();
+        }}
+        stylesContainer={(showSliderPopup && {zIndex: -2}) || {}}
+      />
+
+      &ltView
+        style={{
+          flex: 1,
+          backgroundColor: Theme.white,
+          marginTop: Screen.screenWidth * 0.1,
+        }}>
+        &ltView style={{flex: 1}}>
+          &ltHeader
+            name={articlesData.name}
+            description={isExams ? headerDesription.toUpperCase() : ''}
+            stylesContainer={{marginBottom: 0}}
+          />
+
+          &ltCloudyBackground
+            style={{zIndex: -1}}
+            clouds={[
+              {type: CLOUD_TYPE.TYPE_1, vSize: '10%', position: '2%'},
+              {type: CLOUD_TYPE.TYPE_1, vSize: '12%', position: '40%'},
+              {type: CLOUD_TYPE.TYPE_2, vSize: '12%', position: '72%'},
+            ]}
+          />
+          {(!isLoading && filteredArticles && chooseComponent) || (
+            &ltGlobalLoading visible={isLoading} />
+          )}
+
+          {/* Footers */}
+          {(isExams && (
+            &ltArticleFooter
+              leftButton={() => {
+                navigate('Main', {
+                  screen: 'AllArticles',
+                  params: {
+                    screen: 'ListOfAll',
+                    params: {
+                      categoryID: articlesCatID || '',
+                      currentLocale: currentLocale,
+                      data: articlesData || {},
+                    },
+                  },
+                });
+              }}
+              rightButton={() => setShowSliderPopup(true)}
+              nameOfLeftBtn={examFooterNames.nameOfAllExams}
+              nameOfRightBtn={examFooterNames.nameOfDoctorQuestions}
+              style={{
+                leftButtonContainer: {flex: 1},
+                rightButtonText: {fontSize: 11},
+              }}
+            />
+          )) || &ltBottomButton isSearch={true} getSearchVal={setSearchVal} />}
+        &lt/View>
+        {showSliderPopup && (
+          &ltSliderPopup
+            closeList={() => setShowSliderPopup(false)}
+            articleData={questionArticles}
+            name={examFooterNames.nameOfDoctorQuestions}
+          />
+        )}
+      &lt/View>
+
+      {examOptions?.viewed && (
+        &ltReviewMainScreen
+          closeList={() => {
+            setExamOptions({viewed: false});
+            console.log('here');
+          }}
+          currentDate={''}
+          dataTitle={examOptions.title}
+        />
+      )}
+
+      {symptomsOptions?.viewed && (
+        &ltSymptomsMainScreen
+          closeList={() => setSymptomsOptions({viewed: false})}
+          currentDate={''}
+          dataTitle={symptomsOptions.title}
+        />
+      )}
+    &lt/KeyboardAvoidingView>
+  );
+}
+
+          </code>
+        </pre>
+
+          <h5>Code snippet from MainContext provider component</h5>
+          <pre class="line-numbers">
+          <code class="language-css">
+// This component provides context for all other components,
+// which are subscribed to listen for it
+
+import React from 'react';
+
+const initialState = {
+  selectedWeekByUser: 0,
+};
+
+const contextWrapper = (component?: React.Component) => ({
+  ...initialState,
+  setSelectedWeekByUser: (index: number) => {
+    initialState.selectedWeekByUser = index;
+    component?.setState({context: contextWrapper(component)});
+  },
+});
+
+type Context = ReturnType&lttypeof contextWrapper>;
+
+export const Context = React.createContext&ltContext>(contextWrapper());
+
+interface State {
+  context: Context;
+}
+
+export class ContextProvider extends React.Component {
+  state: State = {
+    context: contextWrapper(this),
+  };
+
+  render() {
+    return (
+      &ltContext.Provider value={this.state.context}>
+        {this.props.children}
+      &lt/Context.Provider>
+    );
+  }
+}
+
+          </code>
+        </pre>
+
+        <h5>Code snippet from MainStack navigation component</h5>
+          <pre class="line-numbers">
+          <code class="language-css">
+
+// Here I wrap the entire navigation stack with context provider,
+// giving React context access to all nested components who are listening 
+
+...
+const Stack = createNativeStackNavigator<MainStackParamList>();
+
+const MainStack = () => {
+  return (
+    &ltContextProvider>
+      &ltStack.Navigator screenOptions={{headerShown: false}}>
+        &ltStack.Screen name="PregnancyMain" component={PregnancyMainScreen} />
+        &ltStack.Screen name="ImportantMain" component={ImportantMainScreen} />
+        &ltStack.Screen name="AllArticles" component={AllArticlesStack} />
+        &ltStack.Screen name="Comparison" component={ComparisonsMainScreen} />
+        &ltStack.Screen
+          name="GestationalWeek"
+          component={GestationalWeekScreen}
+        />
+        &ltStack.Screen name="Calendar" component={CalendarsStack} />
+      &lt/Stack.Navigator>
+    &lt/ContextProvider>
+  );
+};
+
+export default MainStack;
+
+export type MainStackNavigationProp =
+  NativeStackNavigationProp&ltMainStackParamList>;
+
+          </code>
+        </pre>
+
+          <p class="active"><a href="index.html">Back to projects</a></p>
+        </section>
+      </div>
+
+      <!-- Copyright -->
+      <div id="copyright">
+        <ul>
+          <li>&copy; Mario Vatkov</li>
+          <li>Design: <a href="https://html5up.net">HTML5 UP template</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>
