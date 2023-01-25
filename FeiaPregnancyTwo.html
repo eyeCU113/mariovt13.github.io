@@ -130,8 +130,7 @@
   }, []);
 
   useEffect(() => {
-    defaultArticles &&
-      defaultArticles.length > 0 &&
+      defaultArticles?.length > 0 &&
       searchAndSortArticles(defaultArticles);
   }, [searchVal]);
 
